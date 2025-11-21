@@ -138,8 +138,8 @@
                                 </p>
                             </div>
                             <div class="card-footer bg-white border-0 pt-0">
-                                <form action="<%= request.getContextPath()%>/Agregarcarrito" method="post">
-
+                                <form action="${pageContext.request.contextPath}/Agregarcarrito" method="post">
+                                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                                     <input type="hidden" name="productos_id" value="${producto.id}">
                                     <button type="submit" class="btn btn-primary w-100">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-basket me-2" viewBox="0 0 16 16">

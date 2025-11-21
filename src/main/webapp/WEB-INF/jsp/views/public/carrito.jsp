@@ -11,17 +11,7 @@
     <title>CARRITO</title>
     <link href="${pageContext.request.contextPath}/assets/css/styles.css" rel="stylesheet" type="text/css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        /* Estilo para la alerta fija en la parte superior */
-        .fixed-alert {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1050;
-            width: 90%; /* Ancho en móvil */
-            max-width: 400px; /* Ancho máximo en escritorio */
-        }
-    </style>
+
 </head>
 <body>
 
@@ -159,7 +149,7 @@
                         <tr>
                             <th>Producto</th>
                             <th>Precio Unidad</th>
-                            <th>Cantidad</th>
+                            <th class="text-center">Cantidad</th>
                             <th>Subtotal</th>
                             <th>Acción</th>
                         </tr>
@@ -172,18 +162,40 @@
 
                                 <td><fmt:formatNumber value="${item.producto.precio}" type="currency" currencySymbol="$" /></td>
 
+                                <td class="text-center d-flex align-items-center justify-content-center">
 
-                                <td><c:out value="${item.cantidad}"/></td>
+                                    <form action="${pageContext.request.contextPath}/carrito/restar" method="post" style="display:inline;">
+                                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                                        <input type="hidden" name="itemId" value="${item.id}" />
+                                        <button type="submit" class="btn-minus" title="Disminuir Cantidad">
+                                            &#8722;
+                                        </button>
+                                    </form>
+
+                                    <span class="mx-3 fw-bold"><c:out value="${item.cantidad}"/></span>
+
+                                        <%-- Botón para aumentar cantidad (usando el nuevo estilo btn-plus) --%>
+                                    <form action="${pageContext.request.contextPath}/carrito/agregar" method="post" style="display:inline;">
+                                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                                            <%-- Suponemos que al agregar se usa el ID del producto, no del item del carrito --%>
+                                        <input type="hidden" name="productoId" value="${item.producto.id}" />
+                                        <button type="submit" class="btn-plus" title="Aumentar Cantidad">
+                                            &#43; <!-- Símbolo de Más (Plus Sign) -->
+                                        </button>
+                                    </form>
+
+                                </td>
 
 
                                 <td><fmt:formatNumber value="${item.subtotal}" type="currency" currencySymbol="$" /></td>
 
                                 <td>
 
-                                    <form action="${pageContext.request.contextPath}/carrito/quitar" method="post" style="display:inline;">
 
+                                    <form action="${pageContext.request.contextPath}/carrito/quitar" method="post" style="display:inline;">
+                                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                                         <input type="hidden" name="itemId" value="${item.id}" />
-                                        <button type="submit" class="btn btn-danger btn-sm" title="Quitar item">
+                                        <button type="submit" class="btn btn-danger btn-sm" title="Quitar item completo">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
                                                 <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
                                                 <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4h7.764L13 11v9a1 1 0 0 0 1 1H3a1 1 0 0 0 1-1V4z"/>

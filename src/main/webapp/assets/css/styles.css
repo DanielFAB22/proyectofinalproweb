@@ -99,3 +99,106 @@
     object-fit: cover;
     border-radius: 4px;
 }
+.fixed-alert {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1050;
+    width: 90%;
+    max-width: 400px;
+}
+
+
+body.error-page-body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f8f9fa;
+    color: #343a40;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+
+.error-card {
+    text-align: center;
+    padding: 50px;
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    max-width: 500px;
+    width: 90%;
+    border-left: 5px solid #dc3545;
+}
+
+.error-icon {
+    font-size: 60px;
+    color: #dc3545;
+    margin-bottom: 10px;
+}
+
+
+.error-card h1 {
+    font-size: 36px;
+    color: #dc3545;
+    margin-bottom: 5px;
+}
+
+
+.error-card p {
+    font-size: 18px;
+    margin-bottom: 30px;
+}
+
+
+.action-link {
+    display: inline-block;
+    padding: 12px 25px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.action-link:hover {
+    background-color: #0056b3;
+}
+.receipt-card {
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    background-color: #ffffff;
+}
+.receipt-header {
+    background-color: #0d6efd;
+    color: white;
+    padding: 1.5rem;
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+}
+.receipt-card {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* Soft shadow */
+}
+
+.receipt-header {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-top-left-radius: 0.65rem;
+    border-top-right-radius: 0.65rem;
+    border-bottom: 2px solid #007bff;
+}
+.btn-social {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+.btn-social svg {
+    margin-right: 8px;
+}

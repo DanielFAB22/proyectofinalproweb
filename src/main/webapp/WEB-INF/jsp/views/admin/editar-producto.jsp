@@ -42,6 +42,7 @@
 
             <form:form action="${pageContext.request.contextPath}/paneladmin/productos/guardar" method="POST" modelAttribute="producto">
 
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
                 <form:hidden path="id" />
 

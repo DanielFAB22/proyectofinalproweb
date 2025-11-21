@@ -93,11 +93,11 @@
                     Rellena los campos para incluir un nuevo producto en la tienda.
                 </p>
 
-                <!--
-                    La configuración enctype="multipart/form-data" es correcta para subir archivos.
-                -->
+
                 <form action="<%= contextPath %>/paneladmin/productos/guardar" method="POST" enctype="multipart/form-data">
 
+
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
                     <input type="hidden" name="id" value="${producto.id}">
 

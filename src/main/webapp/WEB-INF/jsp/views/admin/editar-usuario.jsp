@@ -45,6 +45,7 @@
 
             <form:form action="${pageContext.request.contextPath}/paneladmin/usuarios/guardar" method="POST" modelAttribute="usuario">
 
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
                 <form:hidden path="id" />
 

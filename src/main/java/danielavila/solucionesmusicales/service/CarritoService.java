@@ -14,4 +14,9 @@ public interface CarritoService {
 
     void quitarItem(String username, Long itemId);
 
+
+    void reducirCantidad(String username, Long itemId);
+
+
+    void vaciarCarrito(String username);
 }

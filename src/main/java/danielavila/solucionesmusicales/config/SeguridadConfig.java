@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 
 @Configuration
-
 @EnableMethodSecurity
 public class SeguridadConfig {
 
@@ -27,15 +26,11 @@ public class SeguridadConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, UserDetailsServiceImpl userDetailsService) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/admin/**"))
+
                 .authorizeHttpRequests(auth -> auth
 
-
-                        .requestMatchers("/paneladmin").hasRole("ADMIN")
-
-
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-
+                        .requestMatchers("/paneladmin", "/api/admin/**").hasRole("ADMIN")
 
                         .requestMatchers(
                                 "/",
@@ -55,23 +50,37 @@ public class SeguridadConfig {
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**"
                         ).permitAll()
-
-
                         .anyRequest().authenticated()
                 )
+
+
                 .formLogin(form -> form
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
-
                         .successHandler(customAuthenticationSuccessHandler)
                         .failureUrl("/login?error=true")
                         .permitAll()
                 )
+
+
+                .oauth2Login(oauth2 -> oauth2
+                        .loginPage("/login")
+
+                        .successHandler(customAuthenticationSuccessHandler)
+                )
+
+
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login?logout=true")
                         .permitAll()
                 )
+
+                .exceptionHandling(exception -> exception
+
+                        .accessDeniedPage("/acceso-denegado")
+                )
+
                 .userDetailsService(userDetailsService);
 
         return http.build();

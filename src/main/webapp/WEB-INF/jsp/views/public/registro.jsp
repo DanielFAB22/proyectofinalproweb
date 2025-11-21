@@ -137,7 +137,7 @@
 
 
 <script>
-    // Variable global que JS necesita para construir la ruta al endpoint de Spring
+
     window.contextPath = "<%= contextPath %>";
 </script>
 

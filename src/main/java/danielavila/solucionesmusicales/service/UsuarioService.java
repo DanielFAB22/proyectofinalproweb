@@ -34,7 +34,7 @@ public class UsuarioService {
     }
 
     
-    @Transactional // <--- AÑADIDO: Asegura que el FetchType.EAGER se resuelva completamente.
+    @Transactional
     public Usuario encontrarPorId(Long id) {
         return usuarioRepository.findById(id).orElse(null);
     }
@@ -49,7 +49,7 @@ public class UsuarioService {
     @Transactional
     public Usuario guardar(Usuario usuario) {
         if (usuario.getId() != null) {
-            // Es una ACTUALIZACIÓN
+
             Optional<Usuario> usuarioExistenteOpt = usuarioRepository.findById(usuario.getId());
 
             if (usuarioExistenteOpt.isPresent()) {

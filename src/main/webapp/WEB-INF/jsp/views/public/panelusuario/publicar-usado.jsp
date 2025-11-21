@@ -86,6 +86,7 @@
 
 
                 <form action="<%= contextPath %>/articulos/publicar" method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
 
                     <div class="row g-3 mb-4">

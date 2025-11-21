@@ -49,8 +49,8 @@
             GUITARRAS ELÉCTRICAS
         </button>
         <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/catalogos/guitarras/fender&quot;&gt;FENDER&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a class=&quot;dropdown-item&quot; href=&quot;${pageContext.request.contextPath}/catalogos/guitarras/gibson">GIBSON</a></li>
+            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/catalogos/guitarras/fender">FENDER</a></li>
+            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/catalogos/guitarras/gibson">GIBSON</a></li>
             <li><a class="dropdown-item" href="${pageContext.request.contextPath}/catalogos/guitarras/schecter">SCHECTER</a></li>
         </ul>
     </div>
@@ -87,6 +87,7 @@
                     <div class="col-md-4 text-md-end mt-3 mt-md-0">
 
                         <form action="<%= contextPath %>/logout" method="post" class="d-inline">
+                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                             <button class="btn btn-outline-danger" type="submit">
                                 Cerrar sesi&oacute;n
                             </button>

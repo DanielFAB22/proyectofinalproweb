@@ -87,6 +87,7 @@
 
 
             <form action="<%= contextPath %>/logout" method="post" class="mb-5">
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 <button class="btn btn-danger" type="submit">Cerrar sesi&oacute;n de Administrador</button>
             </form>
         </div>

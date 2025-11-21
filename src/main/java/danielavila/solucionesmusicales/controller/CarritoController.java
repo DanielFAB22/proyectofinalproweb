@@ -16,14 +16,12 @@ public class CarritoController {
     private final CarritoService carritoService;
 
 
-
     @PostMapping("/Agregarcarrito")
     public String agregarAlCarrito(@RequestParam("productos_id") Integer productoId,
                                    Authentication authentication,
                                    RedirectAttributes redirectAttributes) {
 
         if (authentication == null || !authentication.isAuthenticated()) {
-
             return "redirect:/login";
         }
 
@@ -35,18 +33,14 @@ public class CarritoController {
                     .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
 
             if (isAdmin) {
-
                 throw new RuntimeException("Funcionalidad deshabilitada. Los administradores no pueden utilizar el carrito de compras.");
             }
-
 
             carritoService.agregarProducto(username, productoId);
             redirectAttributes.addFlashAttribute("mensaje", " Producto añadido al carrito con éxito!");
         } catch (RuntimeException e) {
-
             redirectAttributes.addFlashAttribute("error", " Error al añadir el producto: " + e.getMessage());
         }
-
 
         return "redirect:/carrito";
     }
@@ -61,14 +55,33 @@ public class CarritoController {
 
         Carrito carrito = carritoService.obtenerCarritoDeUsuario(username);
 
-
         model.addAttribute("carrito", carrito);
         model.addAttribute("usuarioNombre", username);
-
 
         return "views/public/carrito";
     }
 
+
+    @PostMapping("/carrito/restar")
+    public String reducirCantidadItem(@RequestParam("itemId") Long itemId,
+                                      Authentication authentication,
+                                      RedirectAttributes redirectAttributes) {
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return "redirect:/login";
+        }
+
+        String username = authentication.getName();
+
+        try {
+            carritoService.reducirCantidad(username, itemId);
+            redirectAttributes.addFlashAttribute("mensaje", "Cantidad del producto reducida con éxito.");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", "Error al reducir la cantidad del producto: " + e.getMessage());
+        }
+
+        return "redirect:/carrito";
+    }
 
 
     @PostMapping("/carrito/quitar")
@@ -91,4 +104,6 @@ public class CarritoController {
 
         return "redirect:/carrito";
     }
+
+
 }

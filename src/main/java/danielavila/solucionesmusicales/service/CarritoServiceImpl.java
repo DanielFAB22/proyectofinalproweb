@@ -17,7 +17,6 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-
 public class CarritoServiceImpl implements CarritoService {
 
     private final CarritoRepository carritoRepository;
@@ -102,5 +101,50 @@ public class CarritoServiceImpl implements CarritoService {
 
 
         itemCarritoRepository.delete(itemToRemove);
+    }
+
+    @Override
+    @Transactional
+    public void reducirCantidad(String username, Long itemId) {
+        Carrito carrito = obtenerCarritoDeUsuario(username);
+
+        ItemCarrito itemToReduce = itemCarritoRepository.findById(itemId)
+                .orElseThrow(() -> new RuntimeException("Ítem de carrito no encontrado."));
+
+
+        if (!itemToReduce.getCarrito().getId().equals(carrito.getId())) {
+            throw new RuntimeException("Acceso denegado al ítem del carrito.");
+        }
+
+        int cantidadActual = itemToReduce.getCantidad();
+
+        if (cantidadActual > 1) {
+
+            itemToReduce.setCantidad(cantidadActual - 1);
+            itemCarritoRepository.save(itemToReduce);
+        } else if (cantidadActual == 1) {
+
+            carrito.getItems().remove(itemToReduce);
+            itemCarritoRepository.delete(itemToReduce);
+        }
+
+
+        carritoRepository.save(carrito);
+    }
+
+
+    @Override
+    @Transactional
+    public void vaciarCarrito(String username) {
+        Carrito carrito = obtenerCarritoDeUsuario(username);
+
+
+        if (!carrito.getItems().isEmpty()) {
+            itemCarritoRepository.deleteAll(carrito.getItems());
+        }
+
+
+        carrito.getItems().clear();
+        carritoRepository.save(carrito);
     }
 }
