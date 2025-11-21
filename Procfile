@@ -1,1 +1,0 @@
-web: java -Dspring.profiles.active=heroku -jar target/solucionesmusicales-0.0.1-SNAPSHOT.jar
