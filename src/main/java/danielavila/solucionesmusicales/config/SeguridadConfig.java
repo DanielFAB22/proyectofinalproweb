@@ -63,13 +63,6 @@ public class SeguridadConfig {
                 )
 
 
-                .oauth2Login(oauth2 -> oauth2
-                        .loginPage("/login")
-
-                        .successHandler(customAuthenticationSuccessHandler)
-                )
-
-
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login?logout=true")
