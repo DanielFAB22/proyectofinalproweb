@@ -53,23 +53,9 @@
         </form>
 
 
-        <div class="mt-4 pt-3 border-top">
-            <p class="text-center text-muted mb-3">O inicie sesión con</p>
 
 
-            <a href="${pageContext.request.contextPath}/oauth2/authorization/google"
-               class="btn btn-social btn-danger w-100 py-2 rounded-3 mb-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M15.545 6.558a9.42 9.42 0 0 1 .139 1.626c0 2.434-.87 4.492-2.384 5.885h.002C11.978 15.292 10.15 16 8 16A8 8 0 1 1 8 0a7.689 7.689 0 0 1 5.352 2.082l-2.284 2.284A4.347 4.347 0 0 0 8 3.166c-2.087 0-3.86 1.442-4.492 3.304a4.792 4.792 0 0 0 0 3.063h.003c.635 1.868 2.408 3.309 4.492 3.309 1.09 0 2.112-.34 2.934-.936z"/>
-                </svg>
-                Iniciar sesión con Google
-            </a>
-
-        </div>
-
-
-
-        <div class="text-center mt-3">
+        <div class="text-center mt-4 pt-3 border-top">
             <p class="text-muted">
                 ¿No tienes una cuenta?
                 <a href="${pageContext.request.contextPath}/registro" class="text-primary fw-bold text-decoration-none">
