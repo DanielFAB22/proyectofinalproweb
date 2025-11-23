@@ -1,98 +1,97 @@
+document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("formRegistro");
 
+    function showToast(message, type = "success") {
+        const container = document.getElementById("alert-container");
+        if (!container) return;
 
+        const toast = document.createElement("div");
+        toast.className = `alert alert-${type} alert-dismissible fade show`;
+        toast.role = "alert";
+        toast.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+        container.appendChild(toast);
 
-
-function showToast(message, type) {
-
-    const alertContainer = document.getElementById('alert-container');
-    if (!alertContainer) {
-        console.error("Contenedor de alertas no encontrado.");
-        return;
+        setTimeout(() => {
+            bootstrap.Alert.getOrCreateInstance(toast).close();
+        }, 3000);
     }
 
-    const toastHtml = `
-        <div class="toast align-items-center text-white bg-${type} border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
-            <div class="d-flex">
-                <div class="toast-body">
-                    ${message}
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-        </div>
-    `;
-    alertContainer.insertAdjacentHTML('beforeend', toastHtml);
-    const toastEl = alertContainer.lastElementChild;
-    const toast = new bootstrap.Toast(toastEl);
-    toast.show();
+    async function nuevoRegistro(event) {
+        event.preventDefault();
 
+        console.log("=== Iniciando registro ===");
 
-    toastEl.addEventListener('hidden.bs.toast', () => {
-        toastEl.remove();
-    });
-}
+        const data = new FormData(event.target);
+        const jsonData = {
+            username: data.get('username'),
+            email: data.get('email'),
+            password: data.get('password')
+        };
 
+        console.log("Datos del formulario:", jsonData);
 
-async function nuevoRegistro(event) {
-    event.preventDefault();
+        if (!jsonData.username || !jsonData.email || !jsonData.password) {
+            console.warn("Campos requeridos incompletos.");
+            showToast("Por favor, complete todos los campos requeridos.", 'danger');
+            return false;
+        }
 
-    const form = event.target;
-    const data = new FormData(form);
-    const jsonData = {};
+        const contextPath = window.contextPath || '';
+        const url = contextPath + '/api/registro';
+        console.log("URL de la API:", url);
 
+        try {
+            console.log("Enviando petición POST a la API...");
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(jsonData)
+            });
 
-    jsonData.username = data.get('username');
-    jsonData.email = data.get('email');
-    jsonData.password = data.get('password');
+            console.log("Respuesta recibida:", response);
 
+            if (response.ok) {
+                console.log("Registro exitoso.");
+                showToast("¡Registro exitoso! Serás redirigido al inicio de sesión.", 'success');
 
-    if (!jsonData.username || !jsonData.email || !jsonData.password) {
-        showToast("Por favor, complete todos los campos requeridos.", 'danger');
+                setTimeout(() => {
+                    console.log("Redirigiendo al login...");
+                    window.location.href = contextPath + '/login';
+                }, 2000);
+            } else {
+                console.warn("Respuesta con error:", response.status);
+
+                const errorData = await response.json().catch(() => ({}));
+                console.log("Datos de error del servidor:", errorData);
+
+                let errorMessage = errorData.message || `Error ${response.status}: Ha ocurrido un problema.`;
+
+                if (response.status === 409) {
+                    errorMessage = "Error: El nombre de usuario o email ya están en uso.";
+                } else if (response.status === 400) {
+                    errorMessage = "Error de validación: Por favor, revisa los datos ingresados.";
+                } else if (response.status === 500) {
+                    errorMessage = "Error interno del servidor. Intenta más tarde.";
+                }
+
+                showToast(errorMessage, 'danger');
+            }
+
+        } catch (error) {
+            console.error('Error de red durante el registro:', error);
+            showToast("Error de conexión con el servidor. Verifica tu red.", 'danger');
+        }
+
+        console.log("=== Fin de la función nuevoRegistro ===");
         return false;
     }
 
-
-    const contextPath = window.contextPath || '';
-
-    try {
-
-        const response = await fetch(contextPath + '/api/registro', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-
-            },
-            body: JSON.stringify(jsonData)
-        });
-
-        if (response.ok) {
-
-            showToast("¡Registro exitoso! Serás redirigido al inicio de sesión.", 'success');
-
-            setTimeout(() => {
-                window.location.href = contextPath + '/login';
-            }, 2000);
-        } else {
-
-            const errorData = await response.json().catch(() => ({}));
-            let errorMessage = errorData.message || `Error ${response.status}: Ha ocurrido un problema.`;
-
-
-            if (response.status === 409) {
-                errorMessage = "Error: El nombre de usuario o email ya están en uso.";
-            } else if (response.status === 400) {
-                errorMessage = "Error de validación: Por favor, revisa los datos ingresados.";
-            } else if (response.status === 500) {
-                errorMessage = "Error interno del servidor. Intenta más tarde.";
-            }
-
-            showToast(errorMessage, 'danger');
-        }
-
-    } catch (error) {
-
-        console.error('Error de red durante el registro:', error);
-        showToast("Error de conexión con el servidor. Verifica tu red.", 'danger');
+    if (form) {
+        form.addEventListener("submit", nuevoRegistro);
+    } else {
+        console.error("Formulario de registro no encontrado.");
     }
-
-    return false;
-}
+});

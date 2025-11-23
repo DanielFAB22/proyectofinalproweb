@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QUIÉNES SOMOS?</title>
+
+    <link th:href="@{/assets/css/styles.css}" rel="stylesheet" type="text/css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+<header>
+
+    <a th:href="@{/}">
+        <img th:src="@{/assets/img/logo.png}" alt="logo soluciones musicales" class="logo">
+    </a>
+
+    <div class="iconos">
+
+        <!-- ICONO CARRITO -->
+        <a th:href="@{/carrito}">
+            <img th:src="@{/assets/img/carrito.png}" alt="logo carrito" class="logo">
+        </a>
+
+        <!-- ADMIN -->
+        <a th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}"
+           th:href="@{/paneladmin}">
+            <img th:src="@{/assets/img/user.png}" alt="logo user" class="logo">
+        </a>
+
+        <!-- USUARIO LOGUEADO NORMAL -->
+        <a th:if="${#authorization.expression('isAuthenticated()')
+               and !#authorization.expression('hasRole(''ROLE_ADMIN'')')}"
+           th:href="@{/inicio}">
+            <img th:src="@{/assets/img/user.png}" alt="logo user" class="logo">
+        </a>
+
+        <!-- USUARIO INVITADO (ANÓNIMO) -->
+        <a sec:authorize="isAnonymous()" th:href="@{/inicio}">
+            <img th:src="@{/assets/img/user.png}" alt="logo user" class="logo">
+        </a>
+
+    </div>
+
+
+    <div class="somos">
+        <a th:href="@{/somos}">
+            <h5>Quiénes somos?</h5>
+        </a>
+    </div>
+</header>
+
+
+<nav class="menu">
+    <div class="btn-group">
+        <button class="btn btn-secondary btn-lg dropdown-toggle" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false">
+            GUITARRAS ELÉCTRICAS
+        </button>
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item" th:href="@{/catalogos/guitarras/fender}">FENDER</a></li>
+            <li><a class="dropdown-item" th:href="@{/catalogos/guitarras/gibson}">GIBSON</a></li>
+            <li><a class="dropdown-item" th:href="@{/catalogos/guitarras/schecter}">SCHECTER</a></li>
+        </ul>
+    </div>
+
+    <div class="btn-group">
+        <button class="btn btn-secondary btn-lg dropdown-toggle" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false">
+            BAJOS ELÉCTRICOS
+        </button>
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item" th:href="@{/catalogos/bajos/fender}">FENDER</a></li>
+            <li><a class="dropdown-item" th:href="@{/catalogos/bajos/ibanez}">IBANEZ</a></li>
+            <li><a class="dropdown-item" th:href="@{/catalogos/bajos/schecter}">SCHECTER</a></li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container p-3">
+    <h2>¿Quiénes somos?</h2>
+    <p>Soluciones Musicales es un nuevo emprendimiento que busca principalmente darle un espacio a los músicos para comprar de forma segura y sencilla instrumentos musicales.</p>
+    <p>Nuestra mayor preocupación es asegurar que este espacio sea seguro para nuestros usuarios y que al recibir su instrumento queden satisfechos.</p>
+    <p>Nos ubicamos en Neiva, pero hacemos envíos a todo el país.</p>
+
+    <div class="container mt-4">
+        <h2>Ubicación de nuestra tienda</h2>
+        <div class="ratio ratio-16x9">
+            <iframe src="https://www.google.com/maps/embed?pb=!4v1756351103977!6m8!1m7!1s1pljlADJQtAPeQ2zAh-0Cw!2m2!1d2.928467865111303!2d-75.29248929714704!3f56.095993!4f0!5f0.7820865974627469"
+                    width="800" height="600" style="border:0;" allowfullscreen="" loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+    </div>
+</div>
+
+
+<footer class="bg-dark text-light mt-5 p-4">
+    <div class="container">
+        <div class="row">
+
+            <div class="col-md-4">
+                <h5>SOLUCIONES MUSICALES</h5>
+                <p>Tu tienda de confianza en guitarras y bajos.</p>
+            </div>
+
+            <div class="col-md-4">
+                <h5>Contacto</h5>
+                <ul class="list-unstyled">
+                    <li>+57 300 123 4567</li>
+                    <li>contacto@solucionesmusicales.com</li>
+                    <li>Neiva, Huila, Colombia</li>
+                </ul>
+            </div>
+
+            <div class="col-md-4">
+                <h5>Enlaces</h5>
+                <ul class="list-unstyled">
+                    <li><a th:href="@{/somos}" class="text-light text-decoration-none">Quiénes somos</a></li>
+                    <li><a th:href="@{/guitarras}" class="text-light text-decoration-none">Guitarras</a></li>
+                    <li><a th:href="@{/bajos}" class="text-light text-decoration-none">Bajos</a></li>
+                    <li><a th:href="@{/contacto}" class="text-light text-decoration-none">Contacto</a></li>
+                </ul>
+            </div>
+
+        </div>
+
+        <hr class="border-light">
+        <p class="text-center mb-0">&copy; 2025 Soluciones Musicales - Todos los derechos reservados</p>
+    </div>
+</footer>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

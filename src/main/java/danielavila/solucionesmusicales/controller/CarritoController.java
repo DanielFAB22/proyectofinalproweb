@@ -15,7 +15,6 @@ public class CarritoController {
 
     private final CarritoService carritoService;
 
-
     @PostMapping("/Agregarcarrito")
     public String agregarAlCarrito(@RequestParam("productos_id") Integer productoId,
                                    Authentication authentication,
@@ -28,7 +27,6 @@ public class CarritoController {
         String username = authentication.getName();
 
         try {
-
             boolean isAdmin = authentication.getAuthorities().stream()
                     .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
 
@@ -37,9 +35,9 @@ public class CarritoController {
             }
 
             carritoService.agregarProducto(username, productoId);
-            redirectAttributes.addFlashAttribute("mensaje", " Producto añadido al carrito con éxito!");
+            redirectAttributes.addFlashAttribute("mensaje", "Producto añadido al carrito con éxito!");
         } catch (RuntimeException e) {
-            redirectAttributes.addFlashAttribute("error", " Error al añadir el producto: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "Error al añadir el producto: " + e.getMessage());
         }
 
         return "redirect:/carrito";
@@ -52,21 +50,21 @@ public class CarritoController {
         }
 
         String username = authentication.getName();
-
         Carrito carrito = carritoService.obtenerCarritoDeUsuario(username);
+
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
 
         model.addAttribute("carrito", carrito);
         model.addAttribute("usuarioNombre", username);
-
+        model.addAttribute("isAdmin", isAdmin); // <-- Nuevo atributo
         return "views/public/carrito";
     }
-
 
     @PostMapping("/carrito/restar")
     public String reducirCantidadItem(@RequestParam("itemId") Long itemId,
                                       Authentication authentication,
                                       RedirectAttributes redirectAttributes) {
-
         if (authentication == null || !authentication.isAuthenticated()) {
             return "redirect:/login";
         }
@@ -83,12 +81,10 @@ public class CarritoController {
         return "redirect:/carrito";
     }
 
-
     @PostMapping("/carrito/quitar")
     public String quitarItemCarrito(@RequestParam("itemId") Long itemId,
                                     Authentication authentication,
                                     RedirectAttributes redirectAttributes) {
-
         if (authentication == null || !authentication.isAuthenticated()) {
             return "redirect:/login";
         }
@@ -104,6 +100,5 @@ public class CarritoController {
 
         return "redirect:/carrito";
     }
-
 
 }

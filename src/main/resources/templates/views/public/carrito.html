@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Carrito</title>
+    <link th:href="@{/assets/css/styles.css}" rel="stylesheet" type="text/css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+<header>
+    <a th:href="@{/}">
+        <img th:src="@{/assets/img/logo.png}" alt="logo soluciones musicales" class="logo">
+    </a>
+
+    <div class="iconos">
+        <a th:href="@{/carrito}">
+            <img th:src="@{/assets/img/carrito.png}" alt="logo carrito" class="logo">
+        </a>
+
+        <a th:if="${isAdmin}" th:href="@{/paneladmin}">
+            <img th:src="@{/assets/img/user.png}" alt="logo user" class="logo">
+        </a>
+
+        <a th:unless="${isAdmin}" th:href="@{/inicio}">
+            <img th:src="@{/assets/img/user.png}" alt="logo user" class="logo">
+        </a>
+
+        <a th:if="${isAnonymous}" th:href="@{/inicio}">
+            <img th:src="@{/assets/img/user.png}" alt="logo user" class="logo">
+        </a>
+    </div>
+
+    <div class="somos">
+        <a th:href="@{/somos}"><h5>Quiénes somos?</h5></a>
+    </div>
+</header>
+
+<!-- MENÚ -->
+<nav class="menu">
+    <div class="btn-group">
+        <button class="btn btn-secondary btn-lg dropdown-toggle" data-bs-toggle="dropdown">
+            GUITARRAS ELÉCTRICAS
+        </button>
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item" th:href="@{/catalogos/guitarras/fender}">FENDER</a></li>
+            <li><a class="dropdown-item" th:href="@{/catalogos/guitarras/gibson}">GIBSON</a></li>
+            <li><a class="dropdown-item" th:href="@{/catalogos/guitarras/schecter}">SCHECTER</a></li>
+        </ul>
+    </div>
+
+    <div class="btn-group">
+        <button class="btn btn-secondary btn-lg dropdown-toggle" data-bs-toggle="dropdown">
+            BAJOS ELÉCTRICOS
+        </button>
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item" th:href="@{/catalogos/bajos/fender}">FENDER</a></li>
+            <li><a class="dropdown-item" th:href="@{/catalogos/bajos/ibanez}">IBANEZ</a></li>
+            <li><a class="dropdown-item" th:href="@{/catalogos/bajos/schecter}">SCHECTER</a></li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container p-4">
+    <h1 class="p-4">Carrito de <span th:text="${usuarioNombre}"></span></h1>
+
+    <!-- ALERTAS GENERALES -->
+    <div th:if="${error}">
+        <div class="alert alert-danger alert-dismissible fade show">
+            <strong>Error:</strong> <span th:text="${error}"></span>
+        </div>
+    </div>
+
+    <div th:if="${mensaje}">
+        <div class="alert alert-success alert-dismissible fade show">
+            <strong>Éxito:</strong> <span th:text="${mensaje}"></span>
+        </div>
+    </div>
+
+    <!-- BLOQUE ADMIN -->
+    <div th:if="${isAdmin}" class="alert alert-warning text-center p-5">
+        <h2>Acceso Restringido</h2>
+        <p class="lead">Los administradores no pueden realizar compras.</p>
+        <a th:href="@{/paneladmin}" class="btn btn-primary btn-lg mt-3">Ir al Panel de Administración</a>
+    </div>
+
+    <!-- BLOQUE USUARIOS NORMALES -->
+    <div th:unless="${isAdmin}">
+        <div th:if="${#lists.isEmpty(carrito.items)}">
+            <div class="alert alert-info">Tu carrito está vacío.</div>
+        </div>
+
+        <div th:if="${!#lists.isEmpty(carrito.items)}">
+            <table class="table table-striped">
+                <thead class="table-dark">
+                <tr>
+                    <th>Producto</th>
+                    <th>Precio Unidad</th>
+                    <th class="text-center">Cantidad</th>
+                    <th>Subtotal</th>
+                    <th>Acción</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item : ${carrito.items}">
+                    <td th:text="${item.producto.nombre}"></td>
+                    <td th:text="${#numbers.formatCurrency(item.producto.precio)}"></td>
+                    <td class="text-center d-flex align-items-center justify-content-center">
+                        <form th:action="@{/carrito/restar}" method="post" style="display:inline;">
+                            <input type="hidden" name="itemId" th:value="${item.id}">
+                            <button class="btn-minus">&#8722;</button>
+                        </form>
+                        <span class="mx-3 fw-bold" th:text="${item.cantidad}"></span>
+                        <form th:action="@{/carrito/agregar}" method="post" style="display:inline;">
+                            <input type="hidden" name="productoId" th:value="${item.producto.id}">
+                            <button class="btn-plus">&#43;</button>
+                        </form>
+                    </td>
+                    <td th:text="${#numbers.formatCurrency(item.subtotal)}"></td>
+                    <td>
+                        <form th:action="@{/carrito/quitar}" method="post" style="display:inline;">
+                            <input type="hidden" name="itemId" th:value="${item.id}">
+                            <button class="btn btn-danger btn-sm">🗑</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <h3 class="p-4 text-end">
+                Total del Carrito:
+                <span th:text="${#numbers.formatCurrency(carrito.total)}"></span>
+            </h3>
+
+            <div class="d-flex justify-content-end">
+                <a th:href="@{/checkout}" class="btn btn-success btn-lg">Proceder al Pago</a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<footer class="bg-dark text-light mt-5 p-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <h5>SOLUCIONES MUSICALES</h5>
+                <p>Tu tienda de confianza en guitarras y bajos.</p>
+            </div>
+            <div class="col-md-4">
+                <h5>Contacto</h5>
+                <ul class="list-unstyled">
+                    <li>+57 300 123 4567</li>
+                    <li>contacto@solucionesmusicales.com</li>
+                    <li>Neiva, Huila, Colombia</li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <h5>Enlaces</h5>
+                <ul class="list-unstyled">
+                    <li><a th:href="@{/somos}" class="text-light text-decoration-none">Quiénes somos</a></li>
+                    <li><a th:href="@{/guitarras}" class="text-light text-decoration-none">Guitarras</a></li>
+                    <li><a th:href="@{/bajos}" class="text-light text-decoration-none">Bajos</a></li>
+                    <li><a th:href="@{/contacto}" class="text-light text-decoration-none">Contacto</a></li>
+                </ul>
+            </div>
+        </div>
+        <hr class="border-light">
+        <p class="text-center mb-0">
+            © 2025 Soluciones Musicales - Todos los derechos reservados
+        </p>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

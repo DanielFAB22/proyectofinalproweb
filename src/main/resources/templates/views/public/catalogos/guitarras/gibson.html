@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIBSON GUITARRAS</title>
+
+    <link th:href="@{/assets/css/styles.css}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+<header>
+
+    <a th:href="@{/}">
+        <img th:src="@{/assets/img/logo.png}" alt="logo soluciones musicales" class="logo">
+    </a>
+
+    <div class="iconos">
+
+        <!-- ICONO CARRITO -->
+        <a th:href="@{/carrito}">
+            <img th:src="@{/assets/img/carrito.png}" alt="logo carrito" class="logo">
+        </a>
+
+        <!-- ADMIN -->
+        <a th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}"
+           th:href="@{/paneladmin}">
+            <img th:src="@{/assets/img/user.png}" alt="logo user" class="logo">
+        </a>
+
+        <!-- USUARIO LOGUEADO NORMAL -->
+        <a th:if="${#authorization.expression('isAuthenticated()')
+               and !#authorization.expression('hasRole(''ROLE_ADMIN'')')}"
+           th:href="@{/inicio}">
+            <img th:src="@{/assets/img/user.png}" alt="logo user" class="logo">
+        </a>
+
+        <!-- USUARIO INVITADO (ANÓNIMO) -->
+        <a sec:authorize="isAnonymous()" th:href="@{/inicio}">
+            <img th:src="@{/assets/img/user.png}" alt="logo user" class="logo">
+        </a>
+
+    </div>
+
+    <div class="somos">
+        <a th:href="@{/somos}"><h5>Quiénes somos?</h5></a>
+    </div>
+</header>
+
+
+<nav class="menu">
+    <div class="btn-group">
+        <button class="btn btn-secondary btn-lg dropdown-toggle" type="button"
+                data-bs-toggle="dropdown">GUITARRAS ELÉCTRICAS</button>
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item" th:href="@{/catalogos/guitarras/fender}">FENDER</a></li>
+            <li><a class="dropdown-item" th:href="@{/catalogos/guitarras/gibson}">GIBSON</a></li>
+            <li><a class="dropdown-item" th:href="@{/catalogos/guitarras/schecter}">SCHECTER</a></li>
+        </ul>
+    </div>
+
+    <div class="btn-group">
+        <button class="btn btn-secondary btn-lg dropdown-toggle" type="button"
+                data-bs-toggle="dropdown">BAJOS ELÉCTRICOS</button>
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item" th:href="@{/catalogos/bajos/fender}">FENDER</a></li>
+            <li><a class="dropdown-item" th:href="@{/catalogos/bajos/ibanez}">IBANEZ</a></li>
+            <li><a class="dropdown-item" th:href="@{/catalogos/bajos/schecter}">SCHECTER</a></li>
+        </ul>
+    </div>
+</nav>
+
+
+<div class="container text-center">
+    <img th:src="@{/assets/img/catalogos/guitarras/gibson/gibson.png}"
+         class="d-block mx-auto p-3 w-50 h-25" alt="logo gibson">
+
+    <p>Gibson es una de las marcas más prestigiosas en la historia de la guitarra, reconocida por sus modelos icónicos que definieron el sonido del rock, blues y jazz durante más de un siglo.</p>
+    <p>La compañía fue fundada en 1902 por Orville Gibson en Kalamazoo, Michigan, inicialmente fabricando mandolinas y guitarras acústicas. En 1952 presentó la Les Paul, su modelo estrella creado en colaboración con el guitarrista Les Paul, que se convirtió en un clásico del rock. Modelos como la SG, la Flying V y la Explorer marcaron nuevas generaciones de músicos.</p>
+</div>
+
+
+<!-- 🟦 PRODUCTOS -->
+<div class="container my-5">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+
+        <!-- SI HAY PRODUCTOS -->
+        <div class="col" th:each="producto : ${productos}">
+            <div class="card h-100 shadow-sm">
+
+                <img th:src="@{'/assets/img/catalogos/' + ${producto.imagenUrl}}"
+                     class="card-img-top p-3" alt="" style="object-fit: contain; height: 250px;">
+
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title" th:text="${producto.nombre}"></h5>
+
+                    <button class="btn btn-sm btn-outline-secondary mb-2"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            th:data-bs-target="'#desc' + ${producto.id}">
+                        Mostrar Descripción
+                    </button>
+
+                    <div class="collapse mb-3" th:id="'desc' + ${producto.id}">
+                        <p class="card-text text-muted small"
+                           th:text="${producto.descripcion}"></p>
+                    </div>
+
+                    <p class="card-text text-success fs-4 mt-auto">
+                        $ <span th:text="${#numbers.formatDecimal(producto.precio, 0, 0)}"></span>
+                    </p>
+
+                </div>
+
+                <div class="card-footer bg-white border-0 pt-0">
+                    <form th:action="@{/Agregarcarrito}" method="post">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                        <input type="hidden" name="productos_id" th:value="${producto.id}">
+                        <button type="submit" class="btn btn-primary w-100">
+                            Añadir al Carrito
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- SI NO HAY PRODUCTOS -->
+        <div class="col-12" th:if="${productos == null or #lists.isEmpty(productos)}">
+            <div class="alert alert-info text-center">
+                No hay guitarras Gibson disponibles en este momento.
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<footer class="bg-dark text-light mt-5 p-4">
+    <div class="container">
+        <div class="row">
+
+            <div class="col-md-4">
+                <h5>SOLUCIONES MUSICALES</h5>
+                <p>Tu tienda de confianza.</p>
+            </div>
+
+            <div class="col-md-4">
+                <h5>Contacto</h5>
+                <ul class="list-unstyled">
+                    <li>+57 300 123 4567</li>
+                    <li>contacto@solucionesmusicales.com</li>
+                    <li>Neiva, Huila, Colombia</li>
+                </ul>
+            </div>
+
+            <div class="col-md-4">
+                <h5>Enlaces</h5>
+                <ul class="list-unstyled">
+                    <li><a th:href="@{/somos}" class="text-light text-decoration-none">Quiénes somos</a></li>
+                    <li><a th:href="@{/catalogos/guitarras/fender}" class="text-light text-decoration-none">Guitarras</a></li>
+                    <li><a th:href="@{/catalogos/bajos/fender}" class="text-light text-decoration-none">Bajos</a></li>
+                </ul>
+            </div>
+
+        </div>
+
+        <hr class="border-light">
+        <p class="text-center mb-0">© 2025 Soluciones Musicales - Todos los derechos reservados</p>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

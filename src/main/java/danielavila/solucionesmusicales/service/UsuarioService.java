@@ -27,25 +27,19 @@ public class UsuarioService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-
-    
     public List<Usuario> listarTodosUsuarios() {
         return usuarioRepository.findAll();
     }
 
-    
     @Transactional
     public Usuario encontrarPorId(Long id) {
         return usuarioRepository.findById(id).orElse(null);
     }
 
-    
     public Usuario encontrarPorUsername(String username) {
         return usuarioRepository.findByUsername(username).orElse(null);
     }
 
-
-    
     @Transactional
     public Usuario guardar(Usuario usuario) {
         if (usuario.getId() != null) {
@@ -54,60 +48,53 @@ public class UsuarioService {
 
             if (usuarioExistenteOpt.isPresent()) {
                 Usuario existente = usuarioExistenteOpt.get();
-
-
                 existente.setEmail(usuario.getEmail());
-
-
-
                 return usuarioRepository.save(existente);
             }
         }
 
-
         return usuarioRepository.save(usuario);
     }
 
-    
     @Transactional
     public void eliminarPorId(Long id) {
         usuarioRepository.deleteById(id);
     }
 
 
-    
+
     @Transactional
     public Usuario registrarNuevoUsuario(RegistrationRequestDTO request) {
 
-
         if (usuarioRepository.findByUsername(request.getUsername()).isPresent()) {
-            throw new IllegalArgumentException("El nombre de usuario '" + request.getUsername() + "' ya está registrado.");
+            throw new IllegalArgumentException(
+                    "El nombre de usuario '" + request.getUsername() + "' ya está registrado.");
         }
 
         if (usuarioRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("El email '" + request.getEmail() + "' ya está registrado.");
+            throw new IllegalArgumentException(
+                    "El email '" + request.getEmail() + "' ya está registrado.");
         }
-
 
         Usuario nuevoUsuario = new Usuario();
         nuevoUsuario.setUsername(request.getUsername());
         nuevoUsuario.setEmail(request.getEmail());
 
 
-        String passwordEncriptada = passwordEncoder.encode(request.getPassword());
-        nuevoUsuario.setPassword(passwordEncriptada);
+        nuevoUsuario.setPassword(passwordEncoder.encode(request.getPassword()));
 
 
         Optional<Rol> rolUser = rolRepository.findByNombre("ROLE_USER");
-
         if (rolUser.isEmpty()) {
-            throw new IllegalStateException("El rol 'ROLE_USER' no se encuentra configurado en la base de datos.");
+            throw new IllegalStateException("El rol 'ROLE_USER' no existe en la base de datos.");
         }
 
         Set<Rol> roles = new HashSet<>();
         roles.add(rolUser.get());
         nuevoUsuario.setRoles(roles);
 
+
+        nuevoUsuario.setActivo(true);
 
         return usuarioRepository.save(nuevoUsuario);
     }

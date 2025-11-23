@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>RECIBO DE COMPRA</title>
+
+    <link th:href="@{/assets/css/styles.css}" rel="stylesheet" type="text/css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+<header>
+    <a th:href="@{/}">
+        <img th:src="@{/assets/img/logo.png}" alt="logo soluciones musicales" class="logo">
+    </a>
+
+    <div class="iconos">
+
+        <!-- ICONO CARRITO -->
+        <a th:href="@{/carrito}">
+            <img th:src="@{/assets/img/carrito.png}" alt="logo carrito" class="logo">
+        </a>
+
+        <!-- ADMIN -->
+        <a th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}"
+           th:href="@{/paneladmin}">
+            <img th:src="@{/assets/img/user.png}" alt="logo user" class="logo">
+        </a>
+
+        <!-- USUARIO LOGUEADO NORMAL -->
+        <a th:if="${#authorization.expression('isAuthenticated()')
+               and !#authorization.expression('hasRole(''ROLE_ADMIN'')')}"
+           th:href="@{/inicio}">
+            <img th:src="@{/assets/img/user.png}" alt="logo user" class="logo">
+        </a>
+
+        <!-- USUARIO INVITADO (ANÓNIMO) -->
+        <a sec:authorize="isAnonymous()" th:href="@{/inicio}">
+            <img th:src="@{/assets/img/user.png}" alt="logo user" class="logo">
+        </a>
+
+    </div>
+
+    <div class="somos">
+        <a th:href="@{/somos}"><h5>Quiénes somos?</h5></a>
+    </div>
+</header>
+
+<nav class="menu">
+    <div class="btn-group">
+        <button class="btn btn-secondary btn-lg dropdown-toggle" data-bs-toggle="dropdown">
+            GUITARRAS ELÉCTRICAS
+        </button>
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item" th:href="@{/catalogos/guitarras/fender}">FENDER</a></li>
+            <li><a class="dropdown-item" th:href="@{/catalogos/guitarras/gibson}">GIBSON</a></li>
+            <li><a class="dropdown-item" th:href="@{/catalogos/guitarras/schecter}">SCHECTER</a></li>
+        </ul>
+    </div>
+
+    <div class="btn-group">
+        <button class="btn btn-secondary btn-lg dropdown-toggle" data-bs-toggle="dropdown">
+            BAJOS ELÉCTRICOS
+        </button>
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item" th:href="@{/catalogos/bajos/fender}">FENDER</a></li>
+            <li><a class="dropdown-item" th:href="@{/catalogos/bajos/ibanez}">IBANEZ</a></li>
+            <li><a class="dropdown-item" th:href="@{/catalogos/bajos/schecter}">SCHECTER</a></li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container p-4">
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+
+            <div class="receipt-card">
+                <div class="receipt-header text-center">
+                    <h1 class="mb-0">Recibo de Compra</h1>
+                    <p class="lead fw-light mb-0">
+                        ¡Gracias por tu pedido, <span th:text="${usuarioNombre}"></span>!
+                    </p>
+                </div>
+
+                <div class="p-4">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <p><strong>Número de Pedido:</strong> <span th:text="${orden.id}"></span></p>
+                        </div>
+                        <div class="col-md-6 text-md-end">
+                            <p>
+                                <strong>Fecha de Compra:</strong>
+                                <span th:text="${#dates.format(fechaPedidoLegacy,'dd/MM/yyyy HH:mm')}"></span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <h4 class="mb-3 border-bottom pb-2">Detalle de Productos</h4>
+
+                    <!-- SI NO TIENE ITEMS -->
+                    <div class="alert alert-warning text-center" th:if="${#lists.isEmpty(orden.items)}">
+                        No se encontraron ítems para esta orden.
+                    </div>
+
+                    <!-- SI TIENE ITEMS -->
+                    <div th:if="${!#lists.isEmpty(orden.items)}">
+                        <table class="table table-bordered">
+                            <thead class="table-light">
+                            <tr>
+                                <th>Producto</th>
+                                <th class="text-center">Cant.</th>
+                                <th class="text-end">Precio Unidad</th>
+                                <th class="text-end">Subtotal</th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            <tr th:each="item : ${orden.items}">
+                                <td th:text="${item.producto.nombre}"></td>
+                                <td class="text-center" th:text="${item.cantidad}"></td>
+                                <td class="text-end"
+                                    th:text="${#numbers.formatDecimal(item.producto.precio, 0, 'COMMA', 0, 'POINT')}">
+                                </td>
+                                <td class="text-end fw-bold"
+                                    th:text="${#numbers.formatDecimal(item.subtotal, 0, 'COMMA', 0, 'POINT')}">
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="row mt-4">
+                            <div class="col-12 text-end">
+                                <h4 class="fw-bold text-primary">
+                                    Total Pagado:
+                                    <span th:text="${#numbers.formatDecimal(orden.total, 0, 'COMMA', 0, 'POINT')}"></span>
+                                </h4>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-5 pt-3 border-top text-center text-muted">
+                        <p>Su orden será procesada y enviada a la brevedad.</p>
+                        <p class="small">Soluciones Musicales | Neiva, Huila | +57 300 123 4567</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <a th:href="@{/}" class="btn btn-primary btn-lg">Volver al Catálogo</a>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<footer class="bg-dark text-light mt-5 p-4">
+    <div class="container">
+        <div class="row">
+
+            <div class="col-md-4">
+                <h5>SOLUCIONES MUSICALES</h5>
+                <p>Tu tienda de confianza en guitarras y bajos.</p>
+            </div>
+
+            <div class="col-md-4">
+                <h5>Contacto</h5>
+                <ul class="list-unstyled">
+                    <li>+57 300 123 4567</li>
+                    <li>contacto@solucionesmusicales.com</li>
+                    <li>Neiva, Huila, Colombia</li>
+                </ul>
+            </div>
+
+            <div class="col-md-4">
+                <h5>Enlaces</h5>
+                <ul class="list-unstyled">
+                    <li><a th:href="@{/somos}" class="text-light text-decoration-none">Quiénes somos</a></li>
+                    <li><a th:href="@{/guitarras}" class="text-light text-decoration-none">Guitarras</a></li>
+                    <li><a th:href="@{/bajos}" class="text-light text-decoration-none">Bajos</a></li>
+                    <li><a th:href="@{/contacto}" class="text-light text-decoration-none">Contacto</a></li>
+                </ul>
+            </div>
+
+        </div>
+
+        <hr class="border-light">
+        <p class="text-center mb-0">&copy; 2025 Soluciones Musicales - Todos los derechos reservados</p>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

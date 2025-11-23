@@ -26,13 +26,9 @@ public class DataInitializer {
     CommandLineRunner initData(RolRepository rolRepo, UsuarioRepository userRepo, ProductoRepository productoRepo) {
         return args -> {
 
-
-
-
-
+            // ------- ROLES -------
             Rol rolUser = rolRepo.findByNombre("ROLE_USER").orElse(null);
             Rol rolAdmin = rolRepo.findByNombre("ROLE_ADMIN").orElse(null);
-
 
             if (rolUser == null) {
                 rolUser = rolRepo.save(new Rol(null, "ROLE_USER"));
@@ -43,42 +39,38 @@ public class DataInitializer {
                 System.out.println(" Rol 'ROLE_ADMIN' creado.");
             }
 
-
-
-
+            // ------- USUARIO ADMIN -------
             if (userRepo.findByUsername("admin").isEmpty()) {
                 Usuario admin = Usuario.builder()
                         .username("admin")
                         .email("admin@soluciones.com")
                         .password(passwordEncoder.encode("1234"))
-
                         .roles(Set.of(rolAdmin))
+                        .activo(true)
                         .build();
+
                 userRepo.save(admin);
                 System.out.println(" Usuario 'admin' creado.");
             }
 
-
+            // ------- USUARIO NORMAL -------
             if (userRepo.findByUsername("user").isEmpty()) {
                 Usuario user = Usuario.builder()
                         .username("user")
                         .email("user@soluciones.com")
                         .password(passwordEncoder.encode("1234"))
                         .roles(Set.of(rolUser))
+                        .activo(true)
                         .build();
+
                 userRepo.save(user);
                 System.out.println(" Usuario 'user' creado.");
             }
 
-
-
-
-
-
-
+            // ------- PRODUCTOS -------
             if (productoRepo.count() == 0) {
-                List<Producto> productos = Arrays.asList(new Producto[]{
 
+                List<Producto> productos = Arrays.asList(
 
                         Producto.builder()
                                 .nombre("GUITARRA SCHECTER OMEN 6")
@@ -168,8 +160,6 @@ public class DataInitializer {
                                 .tipoProducto("Guitarra").marca("Schecter")
                                 .destacado(false).build(),
 
-
-
                         Producto.builder()
                                 .nombre("FENDER PRECISION BASS")
                                 .descripcion("El bajo que lo empezó todo. Tono grueso, potente y fundamental para el rock y el soul.")
@@ -249,8 +239,8 @@ public class DataInitializer {
                                 .imagenUrl("bajos/schecter/corsairbass.png")
                                 .tipoProducto("Bajo").marca("Schecter")
                                 .destacado(true)
-                                .build(),
-                });
+                                .build()
+                );
 
                 productoRepo.saveAll(productos);
                 System.out.println(" Productos iniciales cargados: " + productos.size());

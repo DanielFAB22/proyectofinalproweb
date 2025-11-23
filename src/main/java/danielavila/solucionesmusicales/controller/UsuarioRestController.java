@@ -21,7 +21,7 @@ public class UsuarioRestController {
     @Autowired
     private UsuarioService usuarioService;
 
-    
+
     @PostMapping("/registro")
     public ResponseEntity<?> registrarUsuario(@RequestBody RegistrationRequestDTO request) {
 
@@ -61,7 +61,7 @@ public class UsuarioRestController {
 
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("message", "Error interno del servidor al registrar usuario.");
-            System.err.println("Error al registrar: " + e.getMessage()); // Loguear la excepción
+            System.err.println("Error al registrar: " + e.getMessage());
             return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

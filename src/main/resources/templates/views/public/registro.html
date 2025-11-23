@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - Soluciones Musicales</title>
+
+    <link th:href="@{/assets/css/styles.css}" rel="stylesheet" type="text/css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"/>
+</head>
+
+<body>
+<div id="alert-container" class="position-fixed top-0 end-0 p-3" style="z-index: 1050;"></div>
+
+<!-- ===================== HEADER ===================== -->
+<header>
+    <a th:href="@{/}">
+        <img th:src="@{/assets/img/logo.png}" alt="logo soluciones musicales" class="logo">
+    </a>
+
+    <div class="iconos">
+        <a th:href="@{/carrito}">
+            <img th:src="@{/assets/img/carrito.png}" alt="carrito">
+        </a>
+
+        <a th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}" th:href="@{/paneladmin}">
+            <img th:src="@{/assets/img/user.png}" alt="admin">
+        </a>
+
+        <a th:if="${#authorization.expression('isAuthenticated()') and !#authorization.expression('hasRole(''ROLE_ADMIN'')')}" th:href="@{/inicio}">
+            <img th:src="@{/assets/img/user.png}" alt="usuario">
+        </a>
+
+        <a sec:authorize="isAnonymous()" th:href="@{/login}">
+            <img th:src="@{/assets/img/user.png}" alt="login">
+        </a>
+    </div>
+
+    <div class="somos">
+        <a th:href="@{/somos}"><h5>Quiénes somos?</h5></a>
+    </div>
+</header>
+
+<!-- ===================== NAV ===================== -->
+<nav class="menu">
+    <div class="btn-group">
+        <button class="btn btn-secondary btn-lg dropdown-toggle" type="button" data-bs-toggle="dropdown">
+            GUITARRAS ELÉCTRICAS
+        </button>
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item" th:href="@{/catalogos/guitarras/fender}">FENDER</a></li>
+            <li><a class="dropdown-item" th:href="@{/catalogos/guitarras/gibson}">GIBSON</a></li>
+            <li><a class="dropdown-item" th:href="@{/catalogos/guitarras/schecter}">SCHECTER</a></li>
+        </ul>
+    </div>
+
+    <div class="btn-group">
+        <button class="btn btn-secondary btn-lg dropdown-toggle" type="button" data-bs-toggle="dropdown">
+            BAJOS ELÉCTRICOS
+        </button>
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item" th:href="@{/catalogos/bajos/fender}">FENDER</a></li>
+            <li><a class="dropdown-item" th:href="@{/catalogos/bajos/ibanez}">IBANEZ</a></li>
+            <li><a class="dropdown-item" th:href="@{/catalogos/bajos/schecter}">SCHECTER</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- ===================== FORMULARIO REGISTRO ===================== -->
+<div class="container mt-5 mb-5">
+    <h2 class="mb-4 text-center">Registro de Usuario</h2>
+    <form id="formRegistro" class="mx-auto" style="max-width: 500px;">
+        <div class="mb-3">
+            <label for="nombreUsuario" class="form-label">Nombre de usuario</label>
+            <input type="text" name="username" class="form-control" id="nombreUsuario" required>
+        </div>
+        <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" name="email" class="form-control" id="email" required>
+        </div>
+        <div class="mb-3">
+            <label for="contrasena" class="form-label">Contraseña</label>
+            <input type="password" name="password" class="form-control" id="contrasena" required>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Registrarse</button>
+    </form>
+    <div class="text-center mt-3">
+        <a th:href="@{/login}" class="btn btn-secondary">Volver al Login</a>
+    </div>
+</div>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="bg-dark text-light mt-5 p-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <h5>SOLUCIONES MUSICALES</h5>
+                <p>Tu tienda de confianza en guitarras y bajos.</p>
+            </div>
+            <div class="col-md-4">
+                <h5>Contacto</h5>
+                <ul class="list-unstyled">
+                    <li>+57 300 123 4567</li>
+                    <li>contacto@solucionesmusicales.com</li>
+                    <li>Neiva, Huila, Colombia</li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <h5>Enlaces</h5>
+                <ul class="list-unstyled">
+                    <li><a th:href="@{/somos}" class="text-light text-decoration-none">Quiénes somos</a></li>
+                    <li><a th:href="@{/catalogos/guitarras/fender}" class="text-light text-decoration-none">Guitarras</a></li>
+                    <li><a th:href="@{/catalogos/bajos/fender}" class="text-light text-decoration-none">Bajos</a></li>
+                    <li><a href="#" class="text-light text-decoration-none">Contacto</a></li>
+                </ul>
+            </div>
+        </div>
+        <hr class="border-light">
+        <p class="text-center mb-0">&copy; 2025 Soluciones Musicales - Todos los derechos reservados</p>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+
+<script th:inline="javascript">
+    document.addEventListener("DOMContentLoaded", () => {
+        const form = document.getElementById("formRegistro");
+        const container = document.getElementById("alert-container");
+
+        function showBootstrapAlert(message, type = "success") {
+            if (!container) return;
+            const alert = document.createElement("div");
+            alert.className = `alert alert-${type} alert-dismissible fade show`;
+            alert.role = "alert";
+            alert.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+            container.appendChild(alert);
+            setTimeout(() => bootstrap.Alert.getOrCreateInstance(alert).close(), 3000);
+        }
+
+        async function nuevoRegistro(event) {
+            event.preventDefault();
+
+            const data = {
+                username: document.getElementById("nombreUsuario").value.trim(),
+                email: document.getElementById("email").value.trim(),
+                password: document.getElementById("contrasena").value
+            };
+
+            if (!data.username || !data.email || !data.password) {
+                showBootstrapAlert("Por favor, complete todos los campos.", "danger");
+                return;
+            }
+
+            try {
+                const response = await fetch("/api/registro", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data)
+                });
+
+                let result = {};
+                try {
+                    result = await response.json();
+                } catch {
+                    result = { message: "Error al registrar usuario" };
+                }
+
+                if (response.ok) {
+                    showBootstrapAlert("¡Registro exitoso! Redirigiendo al inicio de sesión...", "success");
+                    form.reset();
+                    setTimeout(() => window.location.href = "/login", 2000);
+                } else {
+                    showBootstrapAlert(result.message || "Error al registrar usuario", "danger");
+                }
+            } catch (error) {
+                console.error(error);
+                showBootstrapAlert("Error de red al intentar registrar usuario", "danger");
+            }
+        }
+
+        if (form) form.addEventListener("submit", nuevoRegistro);
+    });
+</script>
+
+</body>
+</html>

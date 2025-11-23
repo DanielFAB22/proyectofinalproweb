@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Productos - Soluciones Musicales</title>
+
+    <link th:href="@{/assets/css/styles.css}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+<header class="header">
+    <a th:href="@{/}">
+        <img th:src="@{/assets/img/logo.png}" alt="logo soluciones musicales" class="logo">
+    </a>
+
+    <div class="iconos">
+
+        <!-- ICONO CARRITO -->
+        <a th:href="@{/carrito}">
+            <img th:src="@{/assets/img/carrito.png}" alt="logo carrito" class="logo">
+        </a>
+
+        <!-- ADMIN -->
+        <a th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}"
+           th:href="@{/paneladmin}">
+            <img th:src="@{/assets/img/user.png}" alt="logo user" class="logo">
+        </a>
+
+        <!-- USUARIO LOGUEADO NORMAL -->
+        <a th:if="${#authorization.expression('isAuthenticated()')
+               and !#authorization.expression('hasRole(''ROLE_ADMIN'')')}"
+           th:href="@{/inicio}">
+            <img th:src="@{/assets/img/user.png}" alt="logo user" class="logo">
+        </a>
+
+        <!-- USUARIO INVITADO (ANÓNIMO) -->
+        <a sec:authorize="isAnonymous()" th:href="@{/inicio}">
+            <img th:src="@{/assets/img/user.png}" alt="logo user" class="logo">
+        </a>
+
+    </div>
+
+    <div class="somos">
+        <a th:href="@{/somos}">
+            <h5>¿Quiénes somos?</h5>
+        </a>
+    </div>
+</header>
+
+<!-- MENÚ -->
+<nav class="menu">
+    <div class="btn-group">
+        <button class="btn btn-secondary btn-lg dropdown-toggle" data-bs-toggle="dropdown">
+            GUITARRAS ELÉCTRICAS
+        </button>
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item" th:href="@{/catalogos/guitarras/fender}">FENDER</a></li>
+            <li><a class="dropdown-item" th:href="@{/catalogos/guitarras/gibson}">GIBSON</a></li>
+            <li><a class="dropdown-item" th:href="@{/catalogos/guitarras/schecter}">SCHECTER</a></li>
+        </ul>
+    </div>
+
+    <div class="btn-group">
+        <button class="btn btn-secondary btn-lg dropdown-toggle" data-bs-toggle="dropdown">
+            BAJOS ELÉCTRICOS
+        </button>
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item" th:href="@{/catalogos/bajos/fender}">FENDER</a></li>
+            <li><a class="dropdown-item" th:href="@{/catalogos/bajos/ibanez}">IBANEZ</a></li>
+            <li><a class="dropdown-item" th:href="@{/catalogos/bajos/schecter}">SCHECTER</a></li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container mt-4">
+
+    <h1>Gestión de Productos</h1>
+    <p class="lead">Listado completo de productos para edición y eliminación.</p>
+
+    <a th:href="@{/paneladmin}" class="btn btn-secondary mb-3">
+        ← Volver al Panel Principal
+    </a>
+
+    <a th:href="@{/paneladmin/productos/nuevo}" class="btn btn-primary mb-3 ms-2">
+        + Añadir Nuevo Producto
+    </a>
+
+    <!-- ALERTAS -->
+    <div class="alert alert-success" th:if="${success}" th:text="${success}"></div>
+    <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+
+    <h2>Lista de Productos</h2>
+
+    <div class="table-responsive mt-3">
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Imagen</th>
+                <th>Nombre</th>
+                <th>Marca</th>
+                <th>Precio</th>
+                <th>Stock</th>
+                <th>Tipo</th>
+                <th>Destacado</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+
+            <tbody>
+
+            <tr th:each="producto : ${productos}">
+                <td th:text="${producto.id}"></td>
+
+                <td>
+                    <img th:src="@{'/assets/img/catalogos/' + ${producto.imagenUrl}}"
+                         class="producto-imagen-mini"
+                         onerror="this.src='https://placehold.co/50x50/cccccc/333333?text=N/A'">
+                </td>
+
+                <td th:text="${producto.nombre}"></td>
+                <td th:text="${producto.marca}"></td>
+                <td>$ <span th:text="${producto.precio}"></span></td>
+
+                <td>
+                    <span class="badge bg-success" th:if="${producto.stock > 10}"
+                          th:text="${producto.stock}"></span>
+
+                    <span class="badge bg-warning text-dark" th:if="${producto.stock > 0 and producto.stock <= 10}"
+                          th:text="${producto.stock}"></span>
+
+                    <span class="badge bg-danger" th:if="${producto.stock == 0}">
+                        Agotado
+                    </span>
+                </td>
+
+                <td th:text="${producto.tipoProducto}"></td>
+
+                <td>
+                    <span class="badge bg-info" th:if="${producto.destacado}">SÍ</span>
+                    <span class="badge bg-secondary" th:unless="${producto.destacado}">NO</span>
+                </td>
+
+                <td>
+                    <a th:href="@{'/paneladmin/productos/editar/' + ${producto.id}}"
+                       class="btn btn-sm btn-warning text-dark me-2">
+                        Editar
+                    </a>
+
+                    <a th:href="@{'/paneladmin/productos/eliminar/' + ${producto.id}}"
+                       class="btn btn-sm btn-danger"
+                       onclick="return confirm('¿Eliminar este producto? Esta acción no se puede deshacer.')">
+                        Eliminar
+                    </a>
+                </td>
+            </tr>
+
+            <tr th:if="${#lists.isEmpty(productos)}">
+                <td colspan="9" class="text-center">No hay productos registrados.</td>
+            </tr>
+
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<footer class="bg-dark text-light mt-5 p-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <h5>SOLUCIONES MUSICALES</h5>
+                <p>Tu tienda de confianza en guitarras y bajos.</p>
+            </div>
+
+            <div class="col-md-4">
+                <h5>Contacto</h5>
+                <ul class="list-unstyled">
+                    <li>+57 300 123 4567</li>
+                    <li>contacto@solucionesmusicales.com</li>
+                    <li>Neiva, Huila, Colombia</li>
+                </ul>
+            </div>
+
+            <div class="col-md-4">
+                <h5>Enlaces</h5>
+                <ul class="list-unstyled">
+                    <li><a th:href="@{/somos}" class="text-light text-decoration-none">¿Quiénes somos?</a></li>
+                    <li><a href="#" class="text-light text-decoration-none">Guitarras</a></li>
+                    <li><a href="#" class="text-light text-decoration-none">Bajos</a></li>
+                    <li><a href="#" class="text-light text-decoration-none">Contacto</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <hr class="border-light">
+        <p class="text-center">&copy; 2025 Soluciones Musicales - Todos los derechos reservados</p>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link th:href="@{/assets/css/styles.css}" rel="stylesheet" type="text/css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"/>
+
+    <title>SOLUCIONES MUSICALES</title>
+</head>
+
+<body>
+
+<header>
+
+    <a th:href="@{/}">
+        <img th:src="@{/assets/img/logo.png}" alt="logo soluciones musicales" class="logo">
+    </a>
+
+    <div class="iconos">
+
+        <!-- ICONO CARRITO -->
+        <a th:href="@{/carrito}">
+            <img th:src="@{/assets/img/carrito.png}" alt="logo carrito" class="logo">
+        </a>
+
+        <!-- ADMIN -->
+        <a th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}"
+           th:href="@{/paneladmin}">
+            <img th:src="@{/assets/img/user.png}" alt="logo user" class="logo">
+        </a>
+
+        <!-- USUARIO LOGUEADO NORMAL -->
+        <a th:if="${#authorization.expression('isAuthenticated()')
+               and !#authorization.expression('hasRole(''ROLE_ADMIN'')')}"
+           th:href="@{/inicio}">
+            <img th:src="@{/assets/img/user.png}" alt="logo user" class="logo">
+        </a>
+
+        <!-- USUARIO INVITADO (ANÓNIMO) -->
+        <a sec:authorize="isAnonymous()" th:href="@{/inicio}">
+            <img th:src="@{/assets/img/user.png}" alt="logo user" class="logo">
+        </a>
+
+    </div>
+
+
+    <div class="somos">
+        <a th:href="@{/somos}"><h5>Quiénes somos?</h5></a>
+    </div>
+</header>
+
+
+
+<nav class="menu">
+
+    <!-- GUITARRAS -->
+    <div class="btn-group">
+        <button class="btn btn-secondary btn-lg dropdown-toggle" type="button"
+                data-bs-toggle="dropdown">GUITARRAS ELÉCTRICAS</button>
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item" th:href="@{/catalogos/guitarras/fender}">FENDER</a></li>
+            <li><a class="dropdown-item" th:href="@{/catalogos/guitarras/gibson}">GIBSON</a></li>
+            <li><a class="dropdown-item" th:href="@{/catalogos/guitarras/schecter}">SCHECTER</a></li>
+        </ul>
+    </div>
+
+    <!-- BAJOS -->
+    <div class="btn-group">
+        <button class="btn btn-secondary btn-lg dropdown-toggle" type="button"
+                data-bs-toggle="dropdown">BAJOS ELÉCTRICOS</button>
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item" th:href="@{/catalogos/bajos/fender}">FENDER</a></li>
+            <li><a class="dropdown-item" th:href="@{/catalogos/bajos/ibanez}">IBANEZ</a></li>
+            <li><a class="dropdown-item" th:href="@{/catalogos/bajos/schecter}">SCHECTER</a></li>
+        </ul>
+    </div>
+
+</nav>
+
+
+<!-- ===================== DESTACADOS ===================== -->
+<div>
+    <h1 class="fw-bold text-center p-3">DESTACADOS</h1>
+</div>
+
+
+<div id="carouselExampleCaptions" class="carousel slide">
+
+    <!-- INDICADORES -->
+    <div class="carousel-indicators">
+        <button th:each="producto, loop : ${productosDestacados}"
+                type="button"
+                data-bs-target="#carouselExampleCaptions"
+                th:attr="data-bs-slide-to=${loop.index}"
+                th:classappend="${loop.index == 0} ? 'active' : ''"
+                th:aria-current="${loop.index == 0} ? 'true' : 'false'"></button>
+    </div>
+
+
+    <!-- ITEMS -->
+    <div class="carousel-inner">
+
+        <!-- SI HAY DESTACADOS -->
+        <div th:if="${productosDestacados != null and !productosDestacados.isEmpty()}"
+             th:each="producto, loop : ${productosDestacados}"
+             th:class="'carousel-item ' + (${loop.index == 0} ? 'active' : '')">
+
+            <a th:href="@{'/catalogos/' +
+                (${producto.tipoProducto} == 'Guitarra' ? 'guitarras' : 'bajos') + '/' +
+                ${producto.marca.toLowerCase()} }">
+
+                <img class="carrusel"
+                     th:src="@{'/assets/img/catalogos/' + ${producto.imagenUrl}}"
+                     th:alt="${producto.nombre}">
+            </a>
+
+            <div class="carousel-caption d-md-block">
+                <h5 class="titulo-carrusel" th:text="${producto.nombre}"></h5>
+                <p class="subtitulo-carrusel" th:text="${producto.descripcion}"></p>
+            </div>
+        </div>
+
+        <!-- SI NO HAY DESTACADOS -->
+        <div th:if="${productosDestacados == null or productosDestacados.isEmpty()}"
+             class="carousel-item active">
+            <img class="carrusel" th:src="@{/assets/img/placeholder.jpg}" alt="No hay destacados">
+            <div class="carousel-caption d-md-block">
+                <h5 class="titulo-carrusel">¡BIENVENIDOS!</h5>
+                <p class="subtitulo-carrusel">Pronto tendremos ofertas destacadas.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions"
+            data-bs-slide="prev"><span class="carousel-control-prev-icon"></span></button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions"
+            data-bs-slide="next"><span class="carousel-control-next-icon"></span></button>
+
+</div>
+
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="bg-dark text-light mt-5 p-4">
+    <div class="container">
+
+        <div class="row">
+
+            <div class="col-md-4">
+                <h5>SOLUCIONES MUSICALES</h5>
+                <p>Tu tienda de confianza en guitarras y bajos.</p>
+            </div>
+
+            <div class="col-md-4">
+                <h5>Contacto</h5>
+                <ul class="list-unstyled">
+                    <li>+57 300 123 4567</li>
+                    <li>contacto@solucionesmusicales.com</li>
+                    <li>Neiva, Huila, Colombia</li>
+                </ul>
+            </div>
+
+            <div class="col-md-4">
+                <h5>Enlaces</h5>
+                <ul class="list-unstyled">
+                    <li><a th:href="@{/somos}" class="text-light text-decoration-none">Quiénes somos</a></li>
+                    <li><a th:href="@{/catalogos/guitarras/fender}" class="text-light text-decoration-none">Guitarras</a></li>
+                    <li><a th:href="@{/catalogos/bajos/fender}" class="text-light text-decoration-none">Bajos</a></li>
+                    <li><a href="#" class="text-light text-decoration-none">Contacto</a></li>
+                </ul>
+            </div>
+
+        </div>
+
+        <hr class="border-light">
+        <p class="text-center mb-0">&copy; 2025 Soluciones Musicales - Todos los derechos reservados</p>
+
+    </div>
+</footer>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

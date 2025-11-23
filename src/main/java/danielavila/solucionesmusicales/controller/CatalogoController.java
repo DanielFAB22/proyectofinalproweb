@@ -14,21 +14,17 @@ import java.util.List;
 @RequestMapping("/catalogos")
 public class CatalogoController {
 
-
     @Autowired
     private ProductoService productoService;
 
-
-    
     private List<Producto> filtrarPorMarcaYTipoProducto(String marca, String tipoProducto) {
-
         return productoService.listarTodosProductosConStock().stream()
                 .filter(p -> marca.equals(p.getMarca()))
                 .filter(p -> tipoProducto.equals(p.getTipoProducto()))
                 .toList();
     }
 
-
+    // ------------------ GUITARRAS -----------------------
 
     @GetMapping("/guitarras")
     public String guitarras() {
@@ -37,28 +33,26 @@ public class CatalogoController {
 
     @GetMapping("/guitarras/fender")
     public String guitarrasFender(Model model) {
-
-        List<Producto> productosFender = filtrarPorMarcaYTipoProducto("Fender", "Guitarra");
-        model.addAttribute("productos", productosFender);
+        model.addAttribute("productos",
+                filtrarPorMarcaYTipoProducto("Fender", "Guitarra"));
         return "views/public/catalogos/guitarras/fender";
     }
 
     @GetMapping("/guitarras/gibson")
     public String guitarrasGibson(Model model) {
-
-        List<Producto> productosGibson = filtrarPorMarcaYTipoProducto("Gibson", "Guitarra");
-        model.addAttribute("productos", productosGibson);
+        model.addAttribute("productos",
+                filtrarPorMarcaYTipoProducto("Gibson", "Guitarra"));
         return "views/public/catalogos/guitarras/gibson";
     }
 
     @GetMapping("/guitarras/schecter")
     public String guitarrasSchecter(Model model) {
-
-        List<Producto> productosSchecter = filtrarPorMarcaYTipoProducto("Schecter", "Guitarra");
-        model.addAttribute("productos", productosSchecter);
+        model.addAttribute("productos",
+                filtrarPorMarcaYTipoProducto("Schecter", "Guitarra"));
         return "views/public/catalogos/guitarras/schecter";
     }
 
+    // ------------------ BAJOS ---------------------------
 
     @GetMapping("/bajos")
     public String bajos() {
@@ -67,25 +61,22 @@ public class CatalogoController {
 
     @GetMapping("/bajos/fender")
     public String bajosFender(Model model) {
-
-        List<Producto> bajosFender = filtrarPorMarcaYTipoProducto("Fender", "Bajo");
-        model.addAttribute("productos", bajosFender);
+        model.addAttribute("productos",
+                filtrarPorMarcaYTipoProducto("Fender", "Bajo"));
         return "views/public/catalogos/bajos/fender";
     }
 
     @GetMapping("/bajos/ibanez")
     public String bajosIbanez(Model model) {
-
-        List<Producto> bajosIbanez = filtrarPorMarcaYTipoProducto("Ibanez", "Bajo");
-        model.addAttribute("productos", bajosIbanez);
+        model.addAttribute("productos",
+                filtrarPorMarcaYTipoProducto("Ibanez", "Bajo"));
         return "views/public/catalogos/bajos/ibanez";
     }
 
     @GetMapping("/bajos/schecter")
     public String bajosSchecter(Model model) {
-
-        List<Producto> bajosSchecter = filtrarPorMarcaYTipoProducto("Schecter", "Bajo");
-        model.addAttribute("productos", bajosSchecter);
+        model.addAttribute("productos",
+                filtrarPorMarcaYTipoProducto("Schecter", "Bajo"));
         return "views/public/catalogos/bajos/schecter";
     }
 }

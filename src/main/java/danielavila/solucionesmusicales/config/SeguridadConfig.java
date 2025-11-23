@@ -11,14 +11,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
-
 
 @Configuration
 @EnableMethodSecurity
 public class SeguridadConfig {
-
 
     @Autowired
     private CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
@@ -26,12 +23,17 @@ public class SeguridadConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, UserDetailsServiceImpl userDetailsService) throws Exception {
         http
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/admin/**"))
+                // Ignorar CSRF solo para endpoints REST
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/api/registro", "/api/admin/**")
+                )
 
+                // Configuración de permisos
                 .authorizeHttpRequests(auth -> auth
-
+                        // Endpoints de admin
                         .requestMatchers("/paneladmin", "/api/admin/**").hasRole("ADMIN")
 
+                        // Endpoints públicos
                         .requestMatchers(
                                 "/",
                                 "/index",
@@ -50,10 +52,12 @@ public class SeguridadConfig {
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**"
                         ).permitAll()
+
+                        // Cualquier otra petición requiere autenticación
                         .anyRequest().authenticated()
                 )
 
-
+                // Login
                 .formLogin(form -> form
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
@@ -62,28 +66,31 @@ public class SeguridadConfig {
                         .permitAll()
                 )
 
-
+                // Logout
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login?logout=true")
                         .permitAll()
                 )
 
+                // Manejo de errores
                 .exceptionHandling(exception -> exception
-
                         .accessDeniedPage("/acceso-denegado")
                 )
 
+                // UserDetailsService
                 .userDetailsService(userDetailsService);
 
         return http.build();
     }
 
+    // Encoder de contraseñas
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    // UserDetailsService
     @Bean
     public UserDetailsService userDetailsService(UserDetailsServiceImpl impl) {
         return impl;
