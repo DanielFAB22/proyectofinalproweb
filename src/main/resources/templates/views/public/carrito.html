@@ -106,19 +106,31 @@
                 <tbody>
                 <tr th:each="item : ${carrito.items}">
                     <td th:text="${item.producto.nombre}"></td>
-                    <td th:text="${#numbers.formatCurrency(item.producto.precio)}"></td>
+
+                    <!-- PRECIO FORMATEADO -->
+                    <td>
+                        $ <span th:text="${#numbers.formatDecimal(item.producto.precio, 0, 0)}"></span>
+                    </td>
+
                     <td class="text-center d-flex align-items-center justify-content-center">
                         <form th:action="@{/carrito/restar}" method="post" style="display:inline;">
                             <input type="hidden" name="itemId" th:value="${item.id}">
                             <button class="btn-minus">&#8722;</button>
                         </form>
+
                         <span class="mx-3 fw-bold" th:text="${item.cantidad}"></span>
+
                         <form th:action="@{/carrito/agregar}" method="post" style="display:inline;">
                             <input type="hidden" name="productoId" th:value="${item.producto.id}">
                             <button class="btn-plus">&#43;</button>
                         </form>
                     </td>
-                    <td th:text="${#numbers.formatCurrency(item.subtotal)}"></td>
+
+                    <!-- SUBTOTAL -->
+                    <td>
+                        $ <span th:text="${#numbers.formatDecimal(item.subtotal, 0, 0)}"></span>
+                    </td>
+
                     <td>
                         <form th:action="@{/carrito/quitar}" method="post" style="display:inline;">
                             <input type="hidden" name="itemId" th:value="${item.id}">
@@ -129,9 +141,10 @@
                 </tbody>
             </table>
 
+            <!-- TOTAL -->
             <h3 class="p-4 text-end">
                 Total del Carrito:
-                <span th:text="${#numbers.formatCurrency(carrito.total)}"></span>
+                $ <span th:text="${#numbers.formatDecimal(carrito.total, 0, 0)}"></span>
             </h3>
 
             <div class="d-flex justify-content-end">
